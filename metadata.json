@@ -1,0 +1,6 @@
+{
+  "name": "AI Financial Scam Detection",
+  "description": "AI-based multi-platform financial scam detection prototype for monitoring suspicious transactions, UPI requests, AutoPay, and communication patterns.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
