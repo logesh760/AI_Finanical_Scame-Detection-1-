@@ -20,6 +20,8 @@ import { TransactionsTab } from './components/dashboard/TransactionsTab';
 import { UPIActivityTab } from './components/dashboard/UPIActivityTab';
 import { AutoPayTab } from './components/dashboard/AutoPayTab';
 import { MessagesTab } from './components/dashboard/MessagesTab';
+import { ScamAlertsTab } from './components/dashboard/ScamAlertsTab';
+import { AIRiskAnalysisTab } from './components/dashboard/AIRiskAnalysisTab';
 import { 
   Sparkles, 
   ShieldCheck, 
@@ -194,6 +196,10 @@ export default function App() {
             <AutoPayTab />
           ) : activeTab === 'messages' ? (
             <MessagesTab />
+          ) : activeTab === 'alerts' ? (
+            <ScamAlertsTab />
+          ) : activeTab === 'risk-analysis' ? (
+            <AIRiskAnalysisTab />
           ) : (
             renderTabPlaceholder(activeTab)
           )}
