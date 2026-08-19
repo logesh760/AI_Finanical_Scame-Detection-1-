@@ -18,6 +18,7 @@ import { DashboardShell } from './components/dashboard/DashboardShell';
 import { ChatbotTab } from './components/dashboard/ChatbotTab';
 import { TransactionsTab } from './components/dashboard/TransactionsTab';
 import { UPIActivityTab } from './components/dashboard/UPIActivityTab';
+import { AutoPayTab } from './components/dashboard/AutoPayTab';
 import { 
   Sparkles, 
   ShieldCheck, 
@@ -188,6 +189,8 @@ export default function App() {
             <TransactionsTab />
           ) : activeTab === 'upi' ? (
             <UPIActivityTab />
+          ) : activeTab === 'autopay' ? (
+            <AutoPayTab />
           ) : (
             renderTabPlaceholder(activeTab)
           )}
