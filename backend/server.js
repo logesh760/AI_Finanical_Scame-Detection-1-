@@ -1,8 +1,21 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { GoogleGenAI } from '@google/genai';
 
 dotenv.config();
+
+// Initialize GoogleGenAI client if API key is present
+let ai = null;
+if (process.env.GEMINI_API_KEY) {
+  try {
+    ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    console.log('Google GenAI client initialized successfully.');
+  } catch (error) {
+    console.error('Failed to initialize GoogleGenAI client:', error);
+  }
+}
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -324,6 +337,45 @@ app.get('/api/scam-messages', (req, res) => {
 
 app.get('/api/user-profile', (req, res) => {
   res.json(mockUserBehaviourProfile);
+});
+
+// AI Chatbot Support Endpoint
+app.post('/api/chat', async (req, res) => {
+  const { message } = req.body;
+  if (!message) {
+    return res.status(400).json({ error: 'Message is required' });
+  }
+
+  // Fallback if no API key is configured
+  if (!process.env.GEMINI_API_KEY || !ai) {
+    let mockResponse = "Hello! I am FinGuard's AI Assistant. Currently, the live Gemini API key is not configured in the backend environment. Please set GEMINI_API_KEY in your environment variables to enable live AI responses.\n\nBased on your query, here is some security advice: Always verify payment requests from unknown numbers, and never share OTPs or credit card details.";
+    
+    const query = message.toLowerCase();
+    if (query.includes('xyz') || query.includes('risk') || query.includes('flagged')) {
+      mockResponse = "The transaction to 'XYZ Services' for ₹4,999 is flagged as HIGH RISK because: \n1. It occurred at 2:30 AM (outside normal daytime window).\n2. The amount is 2.5x higher than your usual pattern.\n3. It correlates with an unverified WhatsApp prompt. \n\nWe recommend freezing this request until you confirm the seller's details.";
+    } else if (query.includes('autopay') || query.includes('subscription')) {
+      mockResponse = "The 'Unknown Cloud VIP Service' AutoPay mandate is highly suspicious because it is set for a recurring ₹2,999/month mandate with no prior history or merchant registry. You should immediately cancel this recurring mandate in your UPI app.";
+    } else if (query.includes('tax') || query.includes('refund') || query.includes('sms')) {
+      mockResponse = "The message from 'VM-ITDEPT-ALERT' claiming a ₹10,000 refund is a classic Advance-Fee Scam. The link asks for a ₹500 fee upfront. Tax departments never ask for upfront payment via UPI to process refunds. Do not click the link or send money.";
+    }
+    
+    return res.json({ response: mockResponse, isMock: true });
+  }
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: message,
+      config: {
+        systemInstruction: "You are FinGuard AI, an expert financial security assistant. You help users analyze scams, phishing SMS, fake UPI collect requests, and unauthorized AutoPay subscriptions. Keep your responses highly professional, action-oriented, clear, and under 150 words. Do not make up information outside financial security."
+      }
+    });
+
+    res.json({ response: response.text, isMock: false });
+  } catch (error) {
+    console.error('Error contacting Gemini API:', error);
+    res.status(500).json({ error: 'Failed to communicate with AI model', details: error.message });
+  }
 });
 
 // Default status route
