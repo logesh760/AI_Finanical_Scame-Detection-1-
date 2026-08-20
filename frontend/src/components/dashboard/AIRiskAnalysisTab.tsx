@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { UserCheck, ShieldAlert, Clock, CreditCard, RefreshCw, Zap, TrendingUp, Sparkles } from 'lucide-react';
-
-interface UserProfile {
-  averageTransactionAmount: number;
-  normalOperatingHours: string;
-  frequentPlatforms: string[];
-  recentHighRiskBehaviours: string[];
-}
+import { UserBehaviourProfile } from '../../types';
 
 export const AIRiskAnalysisTab: React.FC = () => {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<UserBehaviourProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
   // Diagnostic State
   const [isRunningDiagnostic, setIsRunningDiagnostic] = useState(false);
   const [diagnosticReport, setDiagnosticReport] = useState<string | null>(null);
+
+  // Behavioral deviations derived from the app's current security state/anomalies
+  const recentHighRiskBehaviours = [
+    'Nocturnal transaction attempt at 2:30 AM (XYZ Services)',
+    'Rapid succession micro-deductions (5 txns in 2 hours)',
+    'Unverified high-value AutoPay mandate request (₹2,999/month)'
+  ];
+
+  const monitoredChannels = ['UPI (Collect Calls/QR)', 'SMS Monitor', 'AutoPay Mandates', 'WhatsApp Stream'];
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -40,9 +43,9 @@ export const AIRiskAnalysisTab: React.FC = () => {
 
     try {
       const prompt = `Perform a financial threat diagnostic for this profile:
-- Normal Hours: ${profile.normalOperatingHours}
-- Average Transaction: ₹${profile.averageTransactionAmount}
-- Triggered Deviations: ${profile.recentHighRiskBehaviours.join(', ')}
+- Normal Hours: ${profile.commonPaymentTime}
+- Normal Amount Range: ₹${profile.normalAmountRange.min} to ₹${profile.normalAmountRange.max}
+- Triggered Deviations: ${recentHighRiskBehaviours.join(', ')}
 
 Provide a brief, highly professional 2-sentence summary explaining the threat level and what actions the user should take immediately. Do not start with generic greetings.`;
 
@@ -93,8 +96,8 @@ Provide a brief, highly professional 2-sentence summary explaining the threat le
             <div className="space-y-3 pt-2">
               <div className="bg-[#121212] p-3 rounded-xl border border-white/5 flex items-center justify-between">
                 <div>
-                  <span className="text-[9px] font-mono text-gray-500 uppercase block">Average Amount</span>
-                  <span className="text-sm font-bold text-white">₹{profile.averageTransactionAmount}</span>
+                  <span className="text-[9px] font-mono text-gray-500 uppercase block">Normal Range</span>
+                  <span className="text-sm font-bold text-white">₹{profile.normalAmountRange.min} – ₹{profile.normalAmountRange.max}</span>
                 </div>
                 <TrendingUp className="w-5 h-5 text-gray-500" />
               </div>
@@ -102,7 +105,7 @@ Provide a brief, highly professional 2-sentence summary explaining the threat le
               <div className="bg-[#121212] p-3 rounded-xl border border-white/5 flex items-center justify-between">
                 <div>
                   <span className="text-[9px] font-mono text-gray-500 uppercase block">Active Hours</span>
-                  <span className="text-xs font-bold text-white">{profile.normalOperatingHours}</span>
+                  <span className="text-xs font-bold text-white">{profile.commonPaymentTime}</span>
                 </div>
                 <Clock className="w-5 h-5 text-gray-500" />
               </div>
@@ -110,9 +113,16 @@ Provide a brief, highly professional 2-sentence summary explaining the threat le
               <div className="bg-[#121212] p-3 rounded-xl border border-white/5 flex items-center justify-between">
                 <div>
                   <span className="text-[9px] font-mono text-gray-500 uppercase block">Monitored Channels</span>
-                  <span className="text-xs font-bold text-white">{profile.frequentPlatforms.join(', ')}</span>
+                  <span className="text-xs font-bold text-white truncate max-w-[150px] block">{monitoredChannels.join(', ')}</span>
                 </div>
                 <CreditCard className="w-5 h-5 text-gray-500" />
+              </div>
+
+              <div className="bg-[#121212] p-3 rounded-xl border border-white/5 flex items-center justify-between">
+                <div>
+                  <span className="text-[9px] font-mono text-gray-500 uppercase block">Known Payees / Monthly Spend</span>
+                  <span className="text-xs font-bold text-white">{profile.knownReceiversCount} merchants &bull; ₹{profile.averageMonthlySpending}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -141,14 +151,14 @@ Provide a brief, highly professional 2-sentence summary explaining the threat le
               <h4 className="text-[10px] font-mono text-gray-500 uppercase">Behavioral Deviations Timeline</h4>
               
               <div className="space-y-3">
-                {profile.recentHighRiskBehaviours.map((item, idx) => (
+                {recentHighRiskBehaviours.map((item, idx) => (
                   <div key={idx} className="flex gap-3 bg-[#121212] p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                     <div className="p-1.5 rounded-lg bg-orange-500/10 text-orange-400 shrink-0 self-start">
                       <ShieldAlert className="w-4 h-4" />
                     </div>
                     <div>
                       <h5 className="text-xs font-semibold text-white">{item}</h5>
-                      <p className="text-[10px] text-gray-500 mt-1">Cross-platform timing anomaly reported by FinGuard engine.</p>
+                      <p className="text-[10px] text-gray-500 mt-1">Cross-platform anomaly reported by FinGuard engine.</p>
                     </div>
                   </div>
                 ))}

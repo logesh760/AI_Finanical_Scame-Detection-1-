@@ -91,6 +91,17 @@ export interface ScamAlert {
   recommendedAction: string;
 }
 
+export interface ScamHistoryItem {
+  id: string;
+  date: string;
+  type: string;
+  description: string;
+  resolution: string;
+  status: 'RESOLVED' | 'BLOCKED' | 'CANCELLED' | 'PREVENTED';
+  amount: number;
+  platform: string;
+}
+
 export interface SecurityStatus {
   status: 'Protected' | 'Attention Required' | 'High Risk Detected';
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';

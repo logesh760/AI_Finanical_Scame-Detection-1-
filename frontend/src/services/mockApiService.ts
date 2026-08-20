@@ -6,7 +6,8 @@ import {
   AutoPayItem, 
   ScamMessage, 
   ScamAlert,
-  UserBehaviourProfile
+  UserBehaviourProfile,
+  ScamHistoryItem
 } from '../types';
 import { 
   mockSecurityStatus, 
@@ -16,7 +17,8 @@ import {
   mockUPIActivities, 
   mockAutoPayItems, 
   mockScamMessages,
-  mockUserBehaviourProfile
+  mockUserBehaviourProfile,
+  mockScamHistory
 } from '../data/mockData';
 
 // API base URL configuration (reads from environment variables or defaults to current origin /api)
@@ -107,5 +109,15 @@ export const mockApiService = {
       console.warn('Backend offline, using fallback mockUserBehaviourProfile:', e);
     }
     return Promise.resolve(mockUserBehaviourProfile);
+  },
+
+  getScamHistory: async (): Promise<ScamHistoryItem[]> => {
+    try {
+      const res = await fetch(`${API_URL}/scam-history`);
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('Backend offline, using fallback mockScamHistory:', e);
+    }
+    return Promise.resolve(mockScamHistory);
   }
 };

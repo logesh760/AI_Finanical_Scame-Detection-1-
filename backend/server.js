@@ -306,6 +306,49 @@ const mockScamMessages = [
   }
 ];
 
+const mockScamHistory = [
+  {
+    id: 'HIS-901',
+    date: '12 Aug 2026',
+    type: 'Phishing SMS Link',
+    description: 'Electricity bill suspension scam message containing malicious link to clone payment gateway.',
+    resolution: 'Sender number reported & VPA link blacklisted in NPCI registry.',
+    status: 'RESOLVED',
+    amount: 0,
+    platform: 'SMS'
+  },
+  {
+    id: 'HIS-902',
+    date: '10 Aug 2026',
+    type: 'UPI Collect Call',
+    description: 'Incoming ₹15,000 collect request from fake rewards claim handler (reward-center@okpay).',
+    resolution: 'Request rejected, VPA blocked in FinGuard database.',
+    status: 'BLOCKED',
+    amount: 15000,
+    platform: 'UPI'
+  },
+  {
+    id: 'HIS-903',
+    date: '04 Aug 2026',
+    type: 'AutoPay Mandate',
+    description: 'Hidden recurring subscription mandate from unverified global streaming reseller.',
+    resolution: 'Mandate cancelled at banking layer, recurring debit revoked.',
+    status: 'CANCELLED',
+    amount: 1999,
+    platform: 'AutoPay'
+  },
+  {
+    id: 'HIS-904',
+    date: '28 Jul 2026',
+    type: 'WhatsApp Investment Scam',
+    description: 'High-pressure crypto lottery scheme message prompting P2P transfer to new merchant.',
+    resolution: 'Chat reported and user warned; transfer halted by safety module.',
+    status: 'PREVENTED',
+    amount: 5000,
+    platform: 'WhatsApp'
+  }
+];
+
 // API Endpoints
 app.get('/api/security-status', (req, res) => {
   res.json(mockSecurityStatus);
@@ -337,6 +380,10 @@ app.get('/api/scam-messages', (req, res) => {
 
 app.get('/api/user-profile', (req, res) => {
   res.json(mockUserBehaviourProfile);
+});
+
+app.get('/api/scam-history', (req, res) => {
+  res.json(mockScamHistory);
 });
 
 // AI Chatbot Support Endpoint

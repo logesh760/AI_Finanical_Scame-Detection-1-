@@ -22,6 +22,7 @@ import { AutoPayTab } from './components/dashboard/AutoPayTab';
 import { MessagesTab } from './components/dashboard/MessagesTab';
 import { ScamAlertsTab } from './components/dashboard/ScamAlertsTab';
 import { AIRiskAnalysisTab } from './components/dashboard/AIRiskAnalysisTab';
+import { ScamHistoryTab } from './components/dashboard/ScamHistoryTab';
 import { 
   Sparkles, 
   ShieldCheck, 
@@ -200,6 +201,8 @@ export default function App() {
             <ScamAlertsTab />
           ) : activeTab === 'risk-analysis' ? (
             <AIRiskAnalysisTab />
+          ) : activeTab === 'history' ? (
+            <ScamHistoryTab />
           ) : (
             renderTabPlaceholder(activeTab)
           )}
